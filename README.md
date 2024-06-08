@@ -31,7 +31,7 @@ python3 cliente.py
 **Nota**
 En ocasiones, es necesario crear un entorno virtual para instalar algunas dependencias. Para crear y activar un entorno virtual, sigue estos pasos:
 
-Instalar el paquete completo de Python
+Instalar el paquete completo de Python (incluye venv)
 ```bash
 sudo apt install python3-full
 ```
