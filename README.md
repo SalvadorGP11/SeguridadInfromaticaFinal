@@ -26,41 +26,39 @@ El script `Cliente.py` se utiliza para enviar el mensaje oculto.
 
 ```bash
 python3 cliente.py
-Nota
+```
+
+**Nota**
 En ocasiones, es necesario crear un entorno virtual para instalar algunas dependencias. Para crear y activar un entorno virtual, sigue estos pasos:
 
 Instalar el paquete completo de Python
-
-bash
-Copiar código
+```bash
 sudo apt install python3-full
+```
 Crear y activar el entorno virtual
-
-bash
-Copiar código
+```bash
 python3 -m venv nombre_del_entorno
 source nombre_del_entorno/bin/activate
+```
 Instalar las dependencias dentro del entorno virtual
 
-bash
-Copiar código
-pip install rsa stegano pillow
-sudo apt install python3-tk
-Server.py (Máquina 2)
-El script Server.py se utiliza para recibir el mensaje y realizar el proceso inverso para extraer y desencriptar el mensaje.
 
-Instalación de dependencias
-Python y pip
+### Server.py (Máquina 2)
+El script `Server.py` se utiliza para recibir el mensaje y realizar el proceso inverso para extraer y desencriptar el mensaje.
 
-bash
-Copiar código
-sudo apt install python3 python3-pip
-Bibliotecas necesarias
+1. **Python y pip**
+    ```bash
+    sudo apt install python3 python3-pip
+    ```
 
-bash
-Copiar código
-pip3 install rsa stegano pillow
-Ejecución
-bash
-Copiar código
-python3 server.py
+2. **Bibliotecas necesarias**
+    ```bash
+    pip3 install rsa stegano
+    pip3 install pillow
+    ```
+
+#### Ejecución
+
+```bash
+python3 server.py.py
+```
