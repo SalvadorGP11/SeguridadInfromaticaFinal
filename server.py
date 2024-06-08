@@ -3,6 +3,7 @@ import rsa
 import hashlib
 from stegano import lsb
 from pathlib import Path
+from uuid import getnode as get_mac
 
 # Generar llaves RSA
 (public_key, private_key) = rsa.newkeys(2048)
@@ -35,7 +36,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print(f"Conexión establecida con {addr}")
             data = conn.recv(1024)
             if data == b'GET_KEY':
-                conn.sendall(public_key.save_pkcs1())
+                server_mac = get_mac()
+                conn.sendall(f"{server_mac}".encode() + b'\n' + public_key.save_pkcs1())
             elif data == b'SEND_MESSAGE':
                 try:
                     hash_sha384 = conn.recv(96).decode()
