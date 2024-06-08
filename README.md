@@ -60,5 +60,5 @@ El script `Server.py` se utiliza para recibir el mensaje y realizar el proceso i
 #### Ejecución
 
 ```bash
-python3 server.py.py
+python3 server.py
 ```
