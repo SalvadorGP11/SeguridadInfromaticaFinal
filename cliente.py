@@ -74,9 +74,11 @@ def send_large_data(sock, data):
 # Solicitar la IP del servidor al usuario
 server_ip = input("Ingresa la IP del servidor: ")
 
-# Obtener y mostrar la MAC address del equipo cliente
+# Obtener y mostrar la MAC address del equipo cliente en decimal
 client_mac = get_mac()
 print(f"MAC Address del cliente: {client_mac}")
+#formatted_mac = ':'.join(('%012X' % client_mac)[i:i+2] for i in range(0, 12, 2))
+#print(f"MAC Address del cliente: {formatted_mac}")
 
 # Obtener la llave pública del servidor
 public_key = get_public_key(server_ip)
