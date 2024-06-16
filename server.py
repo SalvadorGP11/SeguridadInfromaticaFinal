@@ -5,14 +5,14 @@ from stegano import lsb
 from pathlib import Path
 from uuid import getnode as get_mac
 
-# Generar llaves RSA
+# Generar llaves RSA (A)
 (public_key, private_key) = rsa.newkeys(2048)
 
-# Función para extraer el mensaje escondido
+# Función para extraer el mensaje escondido (B)
 def extract_message(image_path):
     return lsb.reveal(image_path).encode('latin-1')  # Usar latin-1 para decodificar correctamente
 
-# Función para recibir datos grandes
+# Función para recibir datos grandes (C)
 def receive_large_data(conn):
     data_size = int.from_bytes(conn.recv(8), byteorder='big')
     print(f"Esperando recibir {data_size} bytes de datos")
@@ -25,13 +25,13 @@ def receive_large_data(conn):
     print("Datos recibidos completamente")
     return received_data
 
-# Función para generar hashes
+# Función para generar hashes (D)
 def generate_hash(data, hash_type):
     hash_func = hashlib.new(hash_type)
     hash_func.update(data)
     return hash_func.hexdigest()
 
-# Crear el socket del servidor
+# Crear el socket del servidor (E)
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind(('0.0.0.0', 12345))
     s.listen(1)
@@ -54,7 +54,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         with open("received_secret_image.png", 'wb') as file:
                             file.write(secret_image_data)
 
-                        # Validar el hash Blake2 del objeto encubridor
+                        # Validar el hash Blake2 del objeto encubridor (F)
                         calculated_blake2 = generate_hash(secret_image_data, 'blake2b')
                         print(f"Hash Blake2 recibido: {hash_blake2}")
                         print(f"Hash Blake2 calculado: {calculated_blake2}")
@@ -63,11 +63,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                             Path("received_secret_image.png").unlink()
                             continue
 
-                        # Extraer el mensaje
+                        # Extraer el mensaje (G)
                         extracted_message = extract_message("received_secret_image.png")
                         print(f"Mensaje extraído: {extracted_message}")
 
-                        # Validar el hash SHA-512 del mensaje encriptado
+                        # Validar el hash SHA-512 del mensaje encriptado (H)
                         calculated_sha512 = generate_hash(extracted_message, 'sha512')
                         print(f"Hash SHA-512 recibido: {hash_sha512}")
                         print(f"Hash SHA-512 calculado: {calculated_sha512}")
@@ -76,7 +76,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                             Path("received_secret_image.png").unlink()
                             continue
 
-                        # Desencriptar el mensaje con la llave privada
+                        # Desencriptar el mensaje con la llave privada (I)
                         try:
                             decrypted_message = rsa.decrypt(extracted_message, private_key)
                             print(f"Mensaje desencriptado: {decrypted_message}")
@@ -87,7 +87,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                             
              
 
-                        # Validar el hash SHA-384 del mensaje desencriptado
+                        # Validar el hash SHA-384 del mensaje desencriptado (J)
                         calculated_sha384 = generate_hash(decrypted_message, 'sha384')
                         print(f"Hash SHA-384 recibido: {hash_sha384}")
                         print(f"Hash SHA-384 calculado: {calculated_sha384}")
@@ -99,7 +99,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         # Mostrar mensaje indicando que el sistema está listo
                         print("Mensaje verificado y listo.")
 
-                        # Eliminar el objeto encubridor después de extraer y desencriptar el mensaje
+                        # Eliminar el objeto encubridor después de extraer y desencriptar el mensaje (K)
                         try:
                             Path("received_secret_image.png").unlink()
                             print("Objeto encubridor eliminado.")
