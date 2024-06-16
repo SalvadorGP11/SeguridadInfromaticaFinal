@@ -25,6 +25,12 @@ def receive_large_data(conn):
     print("Datos recibidos completamente")
     return received_data
 
+# Función para generar hashes
+def generate_hash(data, hash_type):
+    hash_func = hashlib.new(hash_type)
+    hash_func.update(data)
+    return hash_func.hexdigest()
+
 # Crear el socket del servidor
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind(('0.0.0.0', 12345))
@@ -48,14 +54,27 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         with open("received_secret_image.png", 'wb') as file:
                             file.write(secret_image_data)
 
+                        # Validar el hash Blake2 del objeto encubridor
+                        calculated_blake2 = generate_hash(secret_image_data, 'blake2b')
+                        print(f"Hash Blake2 recibido: {hash_blake2}")
+                        print(f"Hash Blake2 calculado: {calculated_blake2}")
+                        if calculated_blake2 != hash_blake2:
+                            print("Comunicación alterada: hash Blake2 no coincide. Eliminando mensaje.")
+                            Path("received_secret_image.png").unlink()
+                            continue
+
                         # Extraer el mensaje
                         extracted_message = extract_message("received_secret_image.png")
                         print(f"Mensaje extraído: {extracted_message}")
 
-                        # Eliminar el objeto encubridor
-                        steg_object_path = Path("received_secret_image.png")
-                        steg_object_path.unlink()
-                        print(f"Stegobjeto eliminado: {steg_object_path}")
+                        # Validar el hash SHA-512 del mensaje encriptado
+                        calculated_sha512 = generate_hash(extracted_message, 'sha512')
+                        print(f"Hash SHA-512 recibido: {hash_sha512}")
+                        print(f"Hash SHA-512 calculado: {calculated_sha512}")
+                        if calculated_sha512 != hash_sha512:
+                            print("Error: hash SHA-512 no coincide. Eliminando mensaje.")
+                            Path("received_secret_image.png").unlink()
+                            continue
 
                         # Desencriptar el mensaje con la llave privada
                         try:
@@ -63,11 +82,22 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                             print(f"Mensaje desencriptado: {decrypted_message}")
                         except Exception as decryption_error:
                             print(f"Error de desencriptación: {decryption_error}")
+                            Path("received_secret_image.png").unlink()
+                            continue
+                            
+             
+
+                        # Validar el hash SHA-384 del mensaje desencriptado
+                        calculated_sha384 = generate_hash(decrypted_message, 'sha384')
+                        print(f"Hash SHA-384 recibido: {hash_sha384}")
+                        print(f"Hash SHA-384 calculado: {calculated_sha384}")
+                        if calculated_sha384 != hash_sha384:
+                            print("Sistema vulnerado: hash SHA-384 no coincide. Eliminando mensaje.")
+                            Path("received_secret_image.png").unlink()
                             continue
 
-                        print(f"Hash SHA-384 recibido: {hash_sha384}")
-                        print(f"Hash SHA-512 recibido: {hash_sha512}")
-                        print(f"Hash Blake2 recibido: {hash_blake2}")
+                        # Mostrar mensaje indicando que el sistema está listo
+                        print("Mensaje verificado y listo.")
 
                         # Eliminar el objeto encubridor después de extraer y desencriptar el mensaje
                         try:
