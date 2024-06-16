@@ -9,7 +9,7 @@ from pathlib import Path
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 
-# Función para solicitar la llave pública al servidor y obtener la MAC address
+# Función para solicitar la llave pública al servidor y obtener la MAC address (A)
 def get_public_key_and_mac(server_ip):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((server_ip, 12345))
@@ -20,7 +20,7 @@ def get_public_key_and_mac(server_ip):
     public_key = rsa.PublicKey.load_pkcs1(public_key_data)
     return public_key, server_mac
 
-# Función para capturar un mensaje o elegir un archivo
+# Función para capturar un mensaje o elegir un archivo (B)
 def get_message():
     choice = input("¿Quieres capturar un mensaje (1) o elegir un archivo (2)? ")
     if choice == '1':
@@ -35,13 +35,13 @@ def get_message():
         print("Opción no válida.")
         sys.exit(1)
 
-# Función para generar hashes
+# Función para generar hashes (C)
 def generate_hash(data, hash_type):
     hash_func = hashlib.new(hash_type)
     hash_func.update(data)
     return hash_func.hexdigest()
 
-# Función para encriptar el mensaje con RSA inverso
+# Función para encriptar el mensaje con RSA inverso (D)
 def encrypt_message_rsa(message, public_key):
     encrypted_chunks = []
     chunk_size = (public_key.n.bit_length() + 7) // 8 - 11
@@ -50,7 +50,7 @@ def encrypt_message_rsa(message, public_key):
         encrypted_chunks.append(rsa.encrypt(chunk, public_key))
     return b''.join(encrypted_chunks)
 
-# Función para esconder el mensaje en un objeto
+# Función para esconder el mensaje en un objeto (E)
 def hide_message(message):
     root = Tk()
     root.withdraw()  # Ocultar la ventana principal de Tkinter
@@ -60,14 +60,14 @@ def hide_message(message):
     secret_image.save(secret_image_path)
     return secret_image_path
 
-# Función para enviar datos grandes
+# Función para enviar datos grandes (F)
 def send_large_data(sock, data):
     data_size = len(data)
     sock.sendall(data_size.to_bytes(8, byteorder='big'))
     for i in range(0, data_size, 4096):
         sock.sendall(data[i:i + 4096])
 
-# Solicitar la IP del servidor al usuario
+# Solicitar la IP del servidor al usuario (G)
 server_ip = input("Ingresa la IP del servidor: ")
 
 # Obtener la llave pública y la MAC address del servidor
@@ -81,30 +81,30 @@ print(f"Llave pública obtenida: {public_key}")
 #formatted_client_mac = ':'.join(('%012X' % client_mac)[i:i+2] for i in range(0, 12, 2))
 #print(f"MAC Address del cliente: {formatted_client_mac}")
 
-# Capturar el mensaje o archivo
+# Capturar el mensaje o archivo (H)
 message = get_message()
 
-# Generar el hash SHA-384 del mensaje
+# Generar el hash SHA-384 del mensaje (I)
 hash_sha384 = generate_hash(message, 'sha384')
 print(f"Hash SHA-384 del mensaje: {hash_sha384}")
 
-# Encriptar el mensaje con RSA inverso
+# Encriptar el mensaje con RSA inverso (J)
 encrypted_message = encrypt_message_rsa(message, public_key)
 
-# Generar el hash SHA-512 del mensaje encriptado
+# Generar el hash SHA-512 del mensaje encriptado (K)
 hash_sha512 = generate_hash(encrypted_message, 'sha512')
 print(f"Hash SHA-512 del mensaje encriptado: {hash_sha512}")
 
-# Esconder el mensaje en una imagen
+# Esconder el mensaje en una imagen (L)
 secret_image_path = hide_message(encrypted_message)
 
-# Generar el hash Blake2 del mensaje escondido
+# Generar el hash Blake2 del mensaje escondido (M)
 with open(secret_image_path, 'rb') as secret_image_file:
     secret_image_data = secret_image_file.read()
 hash_blake2 = generate_hash(secret_image_data, 'blake2b')
 print(f"Hash Blake2 del mensaje escondido: {hash_blake2}")
 
-# Enviar el mensaje al servidor
+# Enviar el mensaje al servidor (N)
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((server_ip, 12345))
     s.sendall(b'SEND_MESSAGE')
