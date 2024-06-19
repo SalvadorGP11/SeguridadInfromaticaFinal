@@ -10,7 +10,7 @@ from uuid import getnode as get_mac
 
 # (B)
 def extract_message(image_path):
-    return lsb.reveal(image_path).encode('latin-1')  # Usar latin-1 para decodificar correctamente
+    return lsb.reveal(image_path).encode('latin-1')  #
 
 # (C)
 def receive_large_data(conn):
